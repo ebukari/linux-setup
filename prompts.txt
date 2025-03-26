@@ -1,0 +1,67 @@
+The following is a list of steps I want to take to setup a newly installed Ubuntu/Derivatives system. Don't write any code yet. Just understand the process. There are other details to provide
+
+Steps
+---
+1. Update package list
+2. Remove packages specified to be uninstalled
+3. Install packages needed for setup to run successfully
+4. Setup PPAs
+5. Install programs & software
+- Install packages with the package manager that don't need a source to be added
+- Add all the custom sources/ppa's specified with the setup script or source parameter
+- Update the package list
+- Install all the packages with custom sources
+- Install the ones with custom installers
+6. Upgrade
+7. Setup dotfiles
+8. Implement settings
+
+The packages to be installed/removed and the settings to implement will be specified in a .yaml file:
+installs:
+  apt:
+    - name: Visual Studio Code (OSS)
+      package: codium
+      source_script: vscodium.sh
+    - name: Cheat Sheet
+      package: cht.sh
+    - name: Qbittorrent
+      package: qbittorrent
+      source: ppa:qbittorrent-team/qbittorrent-stable
+  flatpak:
+    - name: Bitwarden
+      package: com.bitwarden.desktop
+  commands:
+    - name: Rust Programming Language
+      package: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+uninstalls:
+  apt:
+    - name: LibreOffice
+      package: libreoffice*
+settings:
+  commands:
+    - name: Enable Firewall
+      command: sudo ufw enable
+  scripts:
+    - name: Disable touchscreen
+      script: disable_touchscreen.sh
+
+commands section of installs/uninstalls is for programs/software that can be installed/uninstalled with a command but not through a package manager
+custom sections of installs/uninstalls is for programs/software that require series of commands and therefore is better done with a script
+Scripts for installs/uninstalls and source addition will be found under installers directory
+Scripts for settings will be found in the config directory
+Scripts that contain functions for the tool can be found in utils directory
+
+There are several ways a package can be installed:
+1. when only a package name is supplied you can go ahead and use the package manager to install it.
+2. when a source is provided then that source must be added e.g ppa for nala/apt using the relevant commands
+3. when a source_script is specified, the script sets up the source and then the package manager can be used to install it.
+4. when a command is specified, the software/package can be installed using the command
+5. when the installation is custom, a script is provided that installs the software/program
+
+The script should be able to do the following:
+1. Present all software and settings listed in the yaml document and allow you to choose which to install/Implement
+2. Install all chosen software/packages and implement all settings
+3. Follow all the steps specified in the steps section
+4. Be able to work with any of the package managers specified in the packages section except the package manager is not present on that system and cannot be installed
+5. Have an option to implement all settings and install all software i.e a quiet option
+6. Show nice output so that the user can see which actions succeeded or which actions failed

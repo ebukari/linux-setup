@@ -1,0 +1,73 @@
+#!/bin/sh
+# Check for jq and install if missing
+if ! command -v jq >/dev/null 2>&1; then
+    echo "Installing jq..."
+    if command -v apt-get >/dev/null; then
+        apt-get update && apt-get install -y jq
+    elif command -v brew >/dev/null; then
+        brew install jq
+    else
+        echo "Error: jq required - install manually first"
+        exit 1
+    fi
+fi
+
+# Package installation
+install_packages() {
+    jq -c '.packages[]' packages/packages.json | while IFS= read -r pkg; do
+        name=$(echo "$pkg" | jq -r '.name')
+        manager=$(echo "$pkg" | jq -r '.manager')
+        pkg_name=$(echo "$pkg" | jq -r '.package // empty')
+        setup_script=$(echo "$pkg" | jq -r '.setup_script // empty')
+        custom_installer=$(echo "$pkg" | jq -r '.custom_installer // empty')
+
+        printf "\nInstalling %s...\n" "$name"
+        
+        # Run setup script
+        if [ -n "$setup_script" ]; then
+            printf "Running setup script: %s\n" "$setup_script"
+            sh "packages/$setup_script"
+        fi
+
+        case "$manager" in
+            apt) apt-get install -y "$pkg_name" ;;
+            custom) sh "packages/$custom_installer" ;;
+            *) printf "Unknown package manager: %s\n" "$manager" ;;
+        esac
+    done
+}
+
+# System configuration
+configure_system() {
+    jq -c '.configurations[]' config/config.json | while IFS= read -r cfg; do
+        type=$(echo "$cfg" | jq -r '.type')
+        name=$(echo "$cfg" | jq -r '.name')
+        
+        printf "\nConfiguring %s...\n" "$name"
+        
+        case "$type" in
+            "command")
+                command=$(echo "$cfg" | jq -r '.command')
+                eval "$command"
+                ;;
+            "file")
+                src=$(echo "$cfg" | jq -r '.source')
+                dest=$(echo "$cfg" | jq -r '.destination')
+                service=$(echo "$cfg" | jq -r '.restart_service // empty')
+                
+                cp "config/$src" "$dest"
+                if [ -n "$service" ]; then
+                    service "$service" restart
+                fi
+                ;;
+            *)
+                printf "Unknown config type: %s\n" "$type"
+                ;;
+        esac
+    done
+}
+
+# Main flow
+install_packages
+configure_system
+printf "\nSetup complete!\n"
