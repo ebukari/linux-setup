@@ -2,7 +2,7 @@ installs:
   apt:
     - name: Visual Studio Code (OSS)
       package: codium
-      source_script: custom_installers/vscodium.sh
+      source_script: sources/vscodium.sh
     - name: Cheat Sheet
       package: cht.sh
     - name: duf - Disk Usage/Free Utility
@@ -15,7 +15,7 @@ installs:
       package: lsd
     - name: Sublime Text 4
       package: sublime-text
-      source_script: custom_installers/sublimetext.sh
+      source_script: sources/sublimetext.sh
     - name: Qbittorrent
       package: qbittorrent
       source: ppa:qbittorrent-team/qbittorrent-stable
@@ -32,6 +32,11 @@ installs:
       package: tldr
     - name: fzf - Fuzzy File Finder
       package: fzf
+    - name: Brave Browser
+      package: brave-browser
+    - name: Proton VPN
+      package: proton-vpn-gnome-desktop
+      source_script: sources/protonvpn.sh
   flatpak:
     - name: Bitwarden
       package: com.bitwarden.desktop
@@ -45,9 +50,7 @@ installs:
       package: io.github.prateekmedia.appimagepool
   commands:
     - name: Calibre
-      package: sudo -v && wget -nv -O-
-        https://download.calibre-ebook.com/linux-installer.sh | sudo sh
-        /dev/stdin
+      package: sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
     - name: Rust Programming Language
       package: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 

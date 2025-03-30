@@ -5,12 +5,12 @@
  - Remove unnecessary packages marked for removal
  - Install packages needed for setup
  - Setup PPAs
+ - Upgrade
  - Install programs & software
     - Install the ones with custom installers first
     - Add the PPAs for the one that require PPAs
     - Update package list to pull from new PPAs
     - Install all remaining packages
- - Upgrade
  - Copy dotfiles
  - Make settings
 
@@ -47,6 +47,7 @@
  - Zed
  - Sublime Text
  - VsCodium
+ - Shellcheck
 
 **Internet**
  - qBittorrent

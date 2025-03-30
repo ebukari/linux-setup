@@ -36,20 +36,20 @@ fi
 
 cd "$DOTFILES_DIR"
 
-# First run: Simulation mode
-echo -e "\n${YELLOW}Simulating changes...${NC}"
-stow -nRv --target='$USER' --override='.*' */ || {
-    echo -e "${RED}Simulation failed - check for errors above${NC}"
-    exit 1
-}
+# # First run: Simulation mode
+# echo -e "\n${YELLOW}Simulating changes...${NC}"
+# stow -nRv --target="$HOME" --override='.*' */ || {
+#     echo -e "${RED}Simulation failed - check for errors above${NC}"
+#     exit 1
+# }
 
-# Get confirmation
-if ! confirm "${GREEN}Would you like to apply these changes?${NC}"; then
-    echo -e "${RED}Aborting - no changes made${NC}"
-    exit 0
-fi
+# # Get confirmation
+# if ! confirm "${GREEN}Would you like to apply these changes?${NC}"; then
+#     echo -e "${RED}Aborting - no changes made${NC}"
+#     exit 0
+# fi
 
 # Second run: Actual execution
 echo -e "\n${YELLOW}Applying changes...${NC}"
-stow -Rv --target='$USER' --override='.*' */ && \
+stow -Rv --target="$HOME" --override='.*' */ && \
     echo -e "${GREEN}Successfully linked dotfiles!${NC}"
