@@ -94,7 +94,11 @@ fi
 
 # Update package lists
 log "Updating package lists..."
-apt update
+if apt update; then
+    success "Package lists updated"
+else
+    error "Package list update encountered errors. Continuing..."
+fi
 
 # Remove packages
 log "Removing packages..."
