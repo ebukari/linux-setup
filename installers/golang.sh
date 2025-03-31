@@ -61,8 +61,9 @@ if source "$SHELL_PROFILE"; then
 else
     echo "Some errors while loading bash profile"
 fi
+
 echo -e "\nInstalled version:"
-go version
+su - "$ACTUAL_USER" -c "go version"
 
 # Install tools if not present
 declare -A tools=(
