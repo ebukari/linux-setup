@@ -31,15 +31,15 @@ PPA_S=(
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 log() {
-    echo -e "${BLUE} $(date '+%Y-%m-%d %H:%M:%S') - $* ${NC}"
+    echo -e "${BLUE}ⓘ $(date '+%Y-%m-%d %H:%M:%S') - $* ${NC}"
 }
 
 success() {
-    echo -e "${GREEN}✓${NC} $(date '+%Y-%m-%d %H:%M:%S') $1"
+    echo -e "${GREEN}✓ $(date '+%Y-%m-%d %H:%M:%S') $1${NC}"
 }
 
 error() {
-    echo -e "${RED}✗${NC} $(date '+%Y-%m-%d %H:%M:%S') $1"
+    echo -e "${RED}✗ $(date '+%Y-%m-%d %H:%M:%S') $1${NC}"
 }
 
 run_scripts_in_dir() {
@@ -165,7 +165,7 @@ fi
 
 # Upgrading system
 log "Upgrading system..."
-nala --enable-parallel upgrade -y
+nala upgrade -y
 success "Upgraded system"
 
 # Installing packages
