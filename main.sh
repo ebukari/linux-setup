@@ -31,20 +31,15 @@ PPA_S=(
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 log() {
-    if [ "$#" -gt 0 ]; then
-        echo "${BLUE} ▶ $(date '+%Y-%m-%d %H:%M:%S') - Running: $* ${NC}"
-        "$@"  # Execute the command
-    else
-        echo "${BLUE} $(date '+%Y-%m-%d %H:%M:%S') - $* ${NC}"
-    fi
+    echo -e "${BLUE} $(date '+%Y-%m-%d %H:%M:%S') - $* ${NC}"
 }
 
 success() {
-    echo -e "${GREEN}✓${NC} $1"
+    echo -e "${GREEN}✓${NC} $(date '+%Y-%m-%d %H:%M:%S') $1"
 }
 
 error() {
-    echo -e "${RED}✗${NC} $1"
+    echo -e "${RED}✗${NC} $(date '+%Y-%m-%d %H:%M:%S') $1"
 }
 
 run_scripts_in_dir() {
@@ -100,7 +95,6 @@ fi
 # Update package lists
 log "Updating package lists..."
 apt update
-success "Package lists updated"
 
 # Remove packages
 log "Removing packages..."
@@ -123,7 +117,7 @@ apt autoremove -y
 
 # Installing setup dependencies
 log "Installing setup dependencies..."
-apt install -y \
+nala install -y \
     software-properties-common \
     apt-transport-https \
     aria2 \
@@ -139,6 +133,15 @@ apt install -y \
 
 success "Installed setup dependencies"
 
+log "Configuring nala.."
+if [[ ! -f /etc/apt/sources.list.d/nala-sources.list ]]; then
+    nala fetch --auto
+else
+    log "Nala mirrors already configured"
+fi
+su - "$SUDO_USER" -c "nala --install-completion bash"
+success "Configured nala"
+
 # Adding PPAs
 log "Adding PPAs"
 for ppa in "${PPA_S[@]}"; do
@@ -149,19 +152,12 @@ for ppa in "${PPA_S[@]}"; do
     fi
 done
 
-
-# Configuring nala
-log "Configuring nala..."
-if [[ ! -f /etc/apt/sources.list.d/nala-sources.list ]]; then
-    nala fetch --auto
-else
-    log "Nala mirrors already configured"
-fi
-su - "$SUDO_USER" -c "nala --install-completion bash"
-success "Configured nala"
-
 log "Updating packages list after adding PPA's"
-nala update
+if nala update; then
+    success "Package lists updated"
+else
+    error "Package list update encountered errors. Continuing..."
+fi
 success "Added PPAs"
 
 # Setting up other PPAs/sources with scripts
@@ -169,7 +165,12 @@ log "Adding other sources with scripts..."
 run_scripts_in_dir "${SCRIPT_PARENT_DIR}/sources"
 success "Added other PPAs with scripts"
 
-nala update
+if nala update; then
+    success "Package lists updated"
+else
+    error "Package list update encountered errors. Continuing..."
+fi
+
 
 # Upgrading system
 log "Upgrading system..."
