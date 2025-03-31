@@ -1,10 +1,44 @@
-cd /opt && f=Jackett.Binaries.LinuxAMDx64.tar.gz && sudo wget -Nc https://github.com/Jackett/Jackett/releases/latest/download/"$f" && sudo tar -xzf "$f" && sudo rm -f "$f" && cd Jackett* && sudo chown $(whoami):$(id -g) -R "/opt/Jackett" && sudo ./install_service_systemd.sh && systemctl status jackett.service && cd -
+#!/bin/bash
 
-# && echo -e "\nVisit http://127.0.0.1:9117"
+JACKETT_DIR="/opt/Jackett"
+SERVICE_FILE="/etc/systemd/system/jackett.service"
+ACTUAL_USER=${SUDO_USER:-$(whoami)}
 
-# TDO
-# Visit http://127.0.0.1:9117
-# extract api key
-# edit jackett.json with api key before copy to new location
+# Check if service is active
+if systemctl is-active --quiet jackett.service; then
+    echo "Jackett service already running"
+    exit 0
+fi
 
-# cp -f ../overwrites/jackett.json ~/.local/share/qBittorrent/nova3/engines/
+# Create directory if needed
+sudo mkdir -p /opt
+cd /opt || exit
+
+# Download only if newer version exists
+f=Jackett.Binaries.LinuxAMDx64.tar.gz
+sudo wget -Nc https://github.com/Jackett/Jackett/releases/latest/download/"$f"
+
+# Verify file integrity
+if ! tar -tzf "$f" >/dev/null 2>&1; then
+    echo "Invalid download file, removing..."
+    sudo rm -f "$f"
+    exit 1
+fi
+
+# Extract and install
+sudo tar -xzf "$f"
+sudo rm -f "$f"
+cd Jackett* || exit
+
+# Set permissions
+sudo chown "${ACTUAL_USER}:$(id -gn ${ACTUAL_USER})" -R "$JACKETT_DIR"
+
+# Install service if not exists
+if [ ! -f "$SERVICE_FILE" ]; then
+    sudo ./install_service_systemd.sh
+    sudo systemctl daemon-reload
+fi
+
+# Start service
+sudo systemctl enable --now jackett.service
+systemctl status jackett.service

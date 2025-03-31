@@ -3,11 +3,14 @@
 # Example usage:
 # install_nerd_fonts FiraCode Hack JetBrainsMono UbuntuMono
 
+ACTUAL_USER=${SUDO_USER:-$(whoami)}
+USER_HOME=$(getent passwd "$ACTUAL_USER" | cut -d: -f6)
+
 install_nerd_fonts() {
     set -euo pipefail
     local -a fonts=("$@")
     local repo="ryanoasis/nerd-fonts"
-    local fonts_dir="${HOME}/.local/share/fonts"
+    local fonts_dir="${USER_HOME}/.local/share/fonts"
     local version tmp_dir
 
     # Validate input
@@ -19,7 +22,7 @@ install_nerd_fonts() {
     # Check dependencies
     local dependencies=("curl" "jq" "wget" "unzip")
     for cmd in "${dependencies[@]}"; do
-        if ! command -v "$cmd" &> /dev/null; then
+        if ! command -v "$cmd" &>/dev/null; then
             echo "Error: $cmd is required but not installed" >&2
             return 1
         fi
@@ -73,7 +76,7 @@ install_nerd_fonts() {
 
     # Update font cache
     echo "→ Updating font cache..."
-    fc-cache -fvr "$fonts_dir" > /dev/null 2>&1
+    fc-cache -fvr "$fonts_dir" >/dev/null 2>&1
 
     echo "✅ Nerd Fonts installation complete!"
 }
