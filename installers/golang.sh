@@ -79,6 +79,6 @@ declare -A tools=(
 for cmd in "${!tools[@]}"; do
     if ! command -v "$cmd" &> /dev/null; then
         echo "Installing $cmd..."
-        go install "${tools[$cmd]}"
+        su - "$ACTUAL_USER" -c "go install \"${tools[$cmd]}\""
     fi
 done
