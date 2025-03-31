@@ -10,7 +10,6 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-
 FONT_DIR="${HOME}/.local/share/fonts"
 SUDO_USER=$(logname)
 if [[ -z "$SUDO_USER" ]]; then
@@ -71,7 +70,7 @@ run_scripts_in_dir() {
 
 validate_ppa() {
     local ppa="$1"
-     ls /etc/apt/sources.list.d/*"${ppa/\//-}"*.list &>/dev/null || return 0
+    ls /etc/apt/sources.list.d/*"${ppa/\//-}"*.list &>/dev/null || return 0
 }
 
 check_command() {
@@ -90,7 +89,6 @@ if [ "$(id -u)" -ne 0 ]; then
     echo "This script must be run as root. Use sudo." >&2
     exit 1
 fi
-
 
 # Update package lists
 log "Updating package lists..."
@@ -124,7 +122,7 @@ apt install -y \
     nala \
     p7zip-full 7zip-rar \
     wget \
-    yq \
+    yq
 
 success "Installed setup dependencies"
 
@@ -166,7 +164,6 @@ else
     error "Package list update encountered errors. Continuing..."
 fi
 
-
 # Upgrading system
 log "Upgrading system..."
 nala upgrade -y
@@ -200,7 +197,7 @@ nala install -y \
     tldr \
     torbrowser-launcher \
     vlc \
-    zeal \
+    zeal
 
 success "Installed packages with apt"
 
