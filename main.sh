@@ -108,7 +108,7 @@ apt autoremove -y
 
 # Installing setup dependencies
 log "Installing setup dependencies..."
-nala install -y \
+apt install -y \
     software-properties-common \
     apt-transport-https \
     aria2 \
