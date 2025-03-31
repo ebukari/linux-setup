@@ -99,16 +99,7 @@ apt update
 # Remove packages
 log "Removing packages..."
 for pkg_pattern in "${PURGED_PKGS[@]}"; do
-    # Find installed packages matching the pattern
-    installed_pkgs=$(dpkg-query -W -f='${Package}\n' "$pkg_pattern" 2>/dev/null || true)
-
-    if [[ -n "$installed_pkgs" ]]; then
-        log "Removing packages matching: ${installed_pkgs[*]}"
-        apt purge -y "${installed_pkgs[*]}"
-        success "Removed: $pkg_pattern"
-    else
-        log "No packages match: $pkg_pattern"
-    fi
+    apt purge -y "${pkg_pattern}"
 done
 success "Finished removing packages"
 
