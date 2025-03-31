@@ -187,7 +187,7 @@ nala install -y \
     guake \
     lsd \
     pdfarranger \
-    proton-vpn-gnome-desktop \
+    protonvpn \
     python3-dev \
     python3-pip \
     qbittorrent \

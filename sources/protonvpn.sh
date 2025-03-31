@@ -5,11 +5,6 @@ set -eo pipefail
 DEB_URL="https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.8_all.deb"
 DEB_FILE="protonvpn-stable-release_1.0.8_all.deb"
 EXPECTED_CHECKSUM="0b14e71586b22e498eb20926c48c7b434b751149b1f2af9902ef1cfe6b03e180  protonvpn-stable-release_1.0.8_all.deb"
-TRAY_PACKAGES=(
-    libayatana-appindicator3-1
-    gir1.2-ayatanaappindicator3-0.1
-    gnome-shell-extension-appindicator
-)
 
 # Cleanup downloaded file on exit
 trap 'rm -f "$DEB_FILE"' EXIT
@@ -46,17 +41,3 @@ fi
 
 # Update packages (silent)
 sudo apt-get update >/dev/null 2>&1 || true
-
-# Install ProtonVPN
-echo "Installing ProtonVPN..."
-sudo apt-get install -y proton-vpn-gnome-desktop
-
-# Install system tray support (if missing)
-echo "Checking system tray dependencies..."
-for pkg in "${TRAY_PACKAGES[@]}"; do
-    if ! dpkg -s "$pkg" &> /dev/null; then
-        sudo apt-get install -y "$pkg"
-    fi
-done
-
-echo "ProtonVPN installation complete!"
