@@ -52,10 +52,15 @@ if ! grep -q "/usr/local/go/bin" "$SHELL_PROFILE"; then
 fi
 
 # Cleanup
-rm $FILENAME
+echo "Cleaning up"
+rm -f $FILENAME
 
 # Verify installation
-source "$SHELL_PROFILE"
+if source "$SHELL_PROFILE"; then
+   echo "Refreshed bash profile"
+else
+    echo "Some errors while loading bash profile"
+fi
 echo -e "\nInstalled version:"
 go version
 

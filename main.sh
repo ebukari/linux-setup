@@ -5,20 +5,28 @@ set -eo pipefail
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || greadlink -f "${BASH_SOURCE[0]}" 2>/dev/null)"
 SCRIPT_PARENT_DIR="$(dirname "$SCRIPT_PATH")"
 LOG_FILE="${SCRIPT_PARENT_DIR}/install.log"
-BLUE='\033[0;34m'
-GREEN='\033[0;32m'
+
+# Text Colors
+BLACK='\033[0;30m'
 RED='\033[0;31m'
-NC='\033[0m' # No Color
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+WHITE='\033[0;37m'
+
+# Text Styles (combine with colors)
+BOLD='\033[1m'
+UNDERLINE='\033[4m'
+NC='\033[0m'  # Reset all styles/colors
 
 FONT_DIR="${HOME}/.local/share/fonts"
-SUDO_USER=$(logname)
-if [[ -z "$SUDO_USER" ]]; then
-    SUDO_USER=$(who am i | awk '{print $1}')
-fi
 
 PURGED_PKGS=(
-    "libreoffice-*"
+    "libreoffice*"
     "transmission*"
+    "thunderbird*"
 )
 PPA_S=(
     # "zeal-developers/ppa"
